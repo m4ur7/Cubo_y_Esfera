@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Esfera flotando</title>
+
+</head>
+<body>
+    <!-- Agrega la referencia a Three.js en tu HTML -->
+    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r76/three.min.js"></script>
+    
+    <script>
+        // Variables globales
+        var camera, scene, renderer;
+        var geometry, material, sphere;
+        var clock;
+
+        // Inicialización de la escena
+        function init() {
+            // Configuración del renderizador
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Creación de la escena
+            scene = new THREE.Scene();
+
+            // Creación de una esfera
+            geometry = new THREE.SphereGeometry(1, 32, 32);
+            material = new THREE.MeshBasicMaterial({ color: 0xffff00 }); // Amarillo
+            sphere = new THREE.Mesh(geometry, material);
+            scene.add(sphere);
+
+            // Configuración de la cámara
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 100);
+            camera.position.set(0, 0, -3);
+            camera.lookAt(sphere.position);
+
+            // Inicialización del reloj para el control del tiempo
+            clock = new THREE.Clock();
+
+            // Evento de redimensionamiento de la ventana
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        var dir = 1;
+
+        // Animación de la esfera
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Control de tiempo delta
+            var delta = clock.getDelta();
+
+            // Rotación y movimiento de la esfera
+            sphere.rotation.x += delta * 0.5;
+            sphere.rotation.y += delta * 2;
+            sphere.position.x += dir * delta;
+
+            // Cambio de dirección cuando alcanza los límites
+            if (sphere.position.x > 2) {
+                dir = -1;
+            } else if (sphere.position.x < -2) {
+                dir = 1;
+            }
+
+            // Renderizado de la escena
+            renderer.render(scene, camera);
+        }
+
+        // Función de ajuste al cambiar el tamaño de la ventana
+        function onWindowResize() {
+            // Actualización de la relación de aspecto y tamaño del renderizador
+            windowHalfX = window.innerWidth / 2;
+            windowHalfY = window.innerHeight / 2;
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Llamadas a las funciones de inicialización y animación
+        init();
+        animate();
+    </script>
+</body>
+</html>
